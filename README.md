@@ -8,4 +8,6 @@ To run it, just use `npm start`, it'll open a browser page with the shape render
 
 # Capture Image
 
-To capture an image, just right click the rendered image and use "Save Image As"
+To capture an image, just right click the rendered image and use "Save Image As".
+
+The shape is fully rotatable using the mouse, or using the arrow keys to rotate around any of the three axes (up/down/left/right arrow keys for x/y axes, dot/comma for z axis).
