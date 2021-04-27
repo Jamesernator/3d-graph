@@ -57,7 +57,7 @@ export default class BallPlot3D {
             lineGeometry,
             new THREE.LineBasicMaterial({
                 color: 0xffffff,
-                linewidth: 160,
+                linewidth: 6,
             }),
         );
         line.renderOrder = -1;
