@@ -107,7 +107,7 @@ const WIDTH = 500;
 const HEIGHT = 400;
 
 export default function render(
-    object: THREE.Object3D,
+    createObject: (data: { resolution: THREE.Vector2 }) => THREE.Object3D,
 ): HTMLElement {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
@@ -132,6 +132,9 @@ export default function render(
     }
     animate();
 
+    const object = createObject({
+        resolution: new THREE.Vector2(WIDTH, HEIGHT),
+    });
     scene.add(object);
     void rotor(renderer.domElement, object);
 

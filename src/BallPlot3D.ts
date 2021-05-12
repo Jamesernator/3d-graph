@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { MeshLine, MeshLineMaterial } from "./MeshLine.js";
 
 export type Point = {
     x: number,
@@ -15,8 +16,36 @@ const sphereGeometry = new THREE.SphereGeometry(
 // Smooth the sphere geometry
 sphereGeometry.computeVertexNormals();
 
+class HelixCurve extends THREE.Curve<THREE.Vector3> {
+    readonly #scale: number;
+
+    constructor(scale: number=1) {
+        super();
+        this.#scale = scale;
+    }
+
+    /*
+    get scale(): number {
+        return this.#scale;
+    }
+    */
+
+    getPoint(t: number, optionalTarget=new THREE.Vector3()): THREE.Vector3 {
+        const x = Math.sin(t * 30) * this.#scale;
+        const y = Math.cos(t * 30) * this.#scale;
+        const z = t * this.#scale;
+
+        return optionalTarget.set(x, y, z);
+    }
+}
+
 export default class BallPlot3D {
     readonly group = new THREE.Group();
+    readonly #resolution: THREE.Vector2;
+
+    constructor(resolution: THREE.Vector2) {
+        this.#resolution = resolution;
+    }
 
     addVertex(position: Point, color: number = 0x0): void {
         const sphere = new THREE.Mesh(
@@ -34,35 +63,45 @@ export default class BallPlot3D {
     addLineSegment(
         start: Point,
         end: Point,
-        color: number = 0x777777,
+        color: number = 0xaaaaaa,
     ): void {
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints(
-            [
-                new THREE.Vector3(
-                    start.x,
-                    start.y,
-                    start.z,
-                ),
-                new THREE.Vector3(end.x, end.y, end.z),
-            ],
+        const curve = new THREE.LineCurve3(
+            new THREE.Vector3(start.x, start.y, start.z),
+            new THREE.Vector3(end.x, end.y, end.z),
+        )
+        const lineGeometry = new THREE.TubeGeometry(
+            curve,
+            128,
+            0.1,
+            128,
         );
-        const line = new THREE.Line(
+
+        const lineMesh = new THREE.Mesh(
             lineGeometry,
-            new THREE.LineBasicMaterial({
+            new THREE.MeshBasicMaterial({
                 color,
-                linewidth: 3,
             }),
         );
-        const backgroundLine = new THREE.Line(
-            lineGeometry,
-            new THREE.LineBasicMaterial({
-                color: 0xffffff,
-                linewidth: 6,
+
+        const backgroundLineGeometry = new THREE.TubeGeometry(
+            curve,
+            128,
+            0.2,
+            128,
+        );
+
+        const backgroundLineMesh = new THREE.Line(
+            backgroundLineGeometry,
+            new THREE.MeshBasicMaterial({
+                color: "white",
             }),
         );
-        line.renderOrder = -1;
-        backgroundLine.renderOrder = -2;
-        this.group.add(line, backgroundLine);
+
+        lineMesh.renderOrder = -1;
+        this.group.add(lineMesh);
+
+        backgroundLineMesh.renderOrder = -2;
+        this.group.add(backgroundLineMesh);
     }
 }
 

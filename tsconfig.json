@@ -1,10 +1,11 @@
 {
     "include": [
-        "./src/**/*"
+        "./src/**/*.ts",
+        "./src/**/*.d.ts"
     ],
     "compilerOptions": {
         "module": "esnext",
-        "target": "es2020",
+        "target": "esnext",
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "importsNotUsedAsValues": "error",
